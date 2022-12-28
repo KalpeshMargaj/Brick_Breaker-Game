@@ -27,8 +27,11 @@ public class HelloController implements Initializable {
     @FXML
     private AnchorPane scene;
 
-    double deltax = 0.5;
-    double deltay = 0.5;
+    double deltax = 2;
+//    double deltax = 0.5;
+//
+//    double deltay = 0.5;
+    double deltay = 2;
 
     ArrayList<Rectangle> all_bricks = new ArrayList<>();
 
@@ -109,13 +112,13 @@ public class HelloController implements Initializable {
         }
 
         // uncomment this code, this is just for testing purpose.
-        if(bottomside){
-            deltay *= -1;
-        }
-
 //        if(bottomside){
-//            System.exit(99);
+//            deltay *= -1;
 //        }
+
+        if(bottomside){
+            System.exit(99);
+        }
     }
 
 
@@ -168,16 +171,22 @@ public class HelloController implements Initializable {
 
     public void create_bricks(){
         int counter = 1;
-        for(int i = 255; i > 0; i -= 50){
-            for(int j = 508; j >= 0; j -= 30){
+        for(int i = 200; i > 0; i -= 40){
+            for(int j = 600; j >= 0; j -= 25){
                 if(counter % 2 == 1){
-                    Rectangle rect = new Rectangle(j, i, 40, 40);
+                    Rectangle rect = new Rectangle(j, i, 30, 30);
 
-                    if(counter % 3 == 0){
+                    if(counter % 5 == 0){
                         rect.setFill(Color.BLUE);
                     }
-                    else if(counter % 3 == 1){
+                    else if(counter % 5 == 1){
                         rect.setFill(Color.RED);
+                    }
+                    else if(counter % 5 == 2){
+                        rect.setFill(Color.YELLOW);
+                    }
+                    else if(counter % 5 == 3){
+                        rect.setFill(Color.ORANGE);
                     }
                     else{
                         rect.setFill(Color.GREEN);
