@@ -27,11 +27,11 @@ public class HelloController implements Initializable {
     @FXML
     private AnchorPane scene;
 
-    double deltax = 2;
 //    double deltax = 0.5;
-//
 //    double deltay = 0.5;
-    double deltay = 2;
+
+    double deltax = 0.7;
+    double deltay = 0.7;
 
     ArrayList<Rectangle> all_bricks = new ArrayList<>();
 
@@ -47,12 +47,12 @@ public class HelloController implements Initializable {
             circle.setLayoutX(circle.getLayoutX() + deltax);
 
             // we need to check for collisions every time here.
+            // collision with bricks
+            check_collision_with_bricks();
 
             // collision with walls, which is collision with scene.
             check_collision_with_wall();
 
-            // collision with bricks
-            check_collision_with_bricks();
 
             // collision with slider.
             check_collision_with_slider();
@@ -63,38 +63,6 @@ public class HelloController implements Initializable {
             }
         }
     }));
-
-    public void check_collision_with_bricks(){
-        all_bricks.removeIf(current_brick -> check_collision_with_single_brick(current_brick));
-    }
-
-    public boolean check_collision_with_single_brick(Rectangle brick){
-        if(circle.getBoundsInParent().intersects(brick.getBoundsInParent())){
-            Bounds bounds = brick.getBoundsInLocal();
-            boolean bottomside = circle.getLayoutY() - circle.getRadius() <= bounds.getMaxY();
-            boolean topside = circle.getLayoutY() - circle.getRadius() >= bounds.getMinY();
-            boolean rightside = circle.getLayoutX() - circle.getRadius() <= bounds.getMaxX();
-            boolean leftside = circle.getLayoutX() + circle.getRadius() >= bounds.getMinX();
-
-            if(rightside || leftside){
-                deltax *= -1;
-            }
-
-            if(topside || bottomside){
-                deltay *= -1;
-            }
-
-            scene.getChildren().remove(brick);
-            return true;
-        }
-        return false;
-    }
-
-    public void check_collision_with_slider(){
-        if(circle.getBoundsInParent().intersects(slider.getBoundsInParent())){
-            deltay *= -1;
-        }
-    }
 
     public void check_collision_with_wall(){
         Bounds bounds = scene.getBoundsInLocal();
@@ -121,6 +89,38 @@ public class HelloController implements Initializable {
         }
     }
 
+    public void check_collision_with_bricks(){
+        all_bricks.removeIf(this::check_collision_with_single_brick);
+//        all_bricks.removeIf(current_brick -> check_collision_with_single_brick(current_brick));
+    }
+
+    public boolean check_collision_with_single_brick(Rectangle brick){
+        if(circle.getBoundsInParent().intersects(brick.getBoundsInParent())){
+//            Bounds bounds = brick.getBoundsInLocal();
+            boolean rightside = circle.getLayoutX() >= ((brick.getX() + brick.getWidth()) - circle.getRadius());
+            boolean leftside = circle.getLayoutX() <= (brick.getX() + circle.getRadius());
+            boolean bottomside = circle.getLayoutY() >= ((brick.getY() + brick.getHeight()) - circle.getRadius());
+            boolean topside= circle.getLayoutY() <= (brick.getY() + circle.getRadius());
+
+            if(rightside || leftside){
+                deltax *= -1;
+            }
+
+            if(topside || bottomside){
+                deltay *= -1;
+            }
+
+            scene.getChildren().remove(brick);
+            return true;
+        }
+        return false;
+    }
+
+    public void check_collision_with_slider(){
+        if(circle.getBoundsInParent().intersects(slider.getBoundsInParent())){
+            deltay *= -1;
+        }
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -140,13 +140,13 @@ public class HelloController implements Initializable {
         left.setLayoutY(350);
         right.setLayoutY(350);
 
-        left.setLayoutX(20);
-        right.setLayoutX(540);
+        left.setLayoutX(240);
+        right.setLayoutX(280);
 
         left.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(slider.getLayoutX() > -260)
+                if(slider.getLayoutX() > -280)
                     slider.setLayoutX(slider.getLayoutX() - 20);
             }
         });
@@ -154,7 +154,7 @@ public class HelloController implements Initializable {
         right.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(slider.getLayoutX() < 260)
+                if(slider.getLayoutX() < 280)
                     slider.setLayoutX(slider.getLayoutX() + 20);
             }
         });
@@ -164,7 +164,7 @@ public class HelloController implements Initializable {
     }
 
     public void adding_slider(){
-        slider = new Rectangle(250, 375, 60, 15);
+        slider = new Rectangle(250, 330, 60, 15);
         slider.setFill(Color.BLACK);
         scene.getChildren().add(slider);
     }
@@ -172,7 +172,7 @@ public class HelloController implements Initializable {
     public void create_bricks(){
         int counter = 1;
         for(int i = 200; i > 0; i -= 40){
-            for(int j = 600; j >= 0; j -= 25){
+            for(int j = 508; j >= 0; j -= 25){
                 if(counter % 2 == 1){
                     Rectangle rect = new Rectangle(j, i, 30, 30);
 
